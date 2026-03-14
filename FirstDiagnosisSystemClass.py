@@ -60,37 +60,37 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         # PROGI ALARMOWE (DO DOSTROJENIA!)
         # Wpisz tu wartości nieco wyższe niż średnie błędy (MAE) z Twoich testów
         # ====================================================================
-        self.th0 = 4000.0   # Próg dla MSO 0 (np. 6000 Pa)
-        self.th10 = 3961.6  # Próg dla MSO 10 (był głośniejszy, więc wyższy próg)
-        self.th1 = 4000.0  # Próg dla MSO 1
+        self.th0 = 2783.3   # Próg dla MSO 0 (np. 6000 Pa)
+        self.th1 = 1713.18  # Próg dla MSO 1 (był głośniejszy, więc wyższy próg)
+        self.th10 = 3000.0  # Próg dla MSO 10
 
     def Initialize(self):
         print("Inicjalizacja Grey-Box AI. Wczytywanie 3 modeli i 6 skalerów...")
         
         # --- Wczytywanie MSO 0 ---
         self.model0 = GreyBoxSystem(num_states=1, num_inputs=4) 
-        self.model0.load_state_dict(torch.load('szara_skrzynka_mso0_wagi.pth'))
+        self.model0.load_state_dict(torch.load(r"C:\Users\anton\OneDrive\Desktop\Diagnosis_System\source\0\szara_skrzynka_mso0.pth"))
         self.model0.eval()
-        self.scaler_u0 = joblib.load('scaler_u_mso0.pkl')
-        self.scaler_y0 = joblib.load('scaler_y_mso0.pkl')
+        self.scaler_u0 = joblib.load(r"C:\Users\anton\OneDrive\Desktop\Diagnosis_System\source\0\scaler_u_mso0.pkl")
+        self.scaler_y0 = joblib.load(r"C:\Users\anton\OneDrive\Desktop\Diagnosis_System\source\0\scaler_y_mso0.pkl")
         self.x0 = torch.zeros(1, 1) # Tutaj też musi być 1 zaro
         self.e0_filt = 0.0        # Wyzerowany błąd
         
         # --- Wczytywanie MSO 10 ---
         self.model10 = GreyBoxSystem(num_states=1, num_inputs=4)
-        self.model10.load_state_dict(torch.load('szara_skrzynka_mso10_wagi.pth'))
+        self.model10.load_state_dict(torch.load(r"C:\Users\anton\OneDrive\Desktop\Diagnosis_System\source\10\szara_skrzynka_mso10_wagi_zmiejszone.pth"))
         self.model10.eval()
-        self.scaler_u10 = joblib.load('scaler_u_mso10.pkl')
-        self.scaler_y10 = joblib.load('scaler_y_mso10.pkl')
+        self.scaler_u10 = joblib.load(r"C:\Users\anton\OneDrive\Desktop\Diagnosis_System\source\10\scaler_u_mso10_zmniejszone.pkl")
+        self.scaler_y10 = joblib.load(r"C:\Users\anton\OneDrive\Desktop\Diagnosis_System\source\10\scaler_y_mso10_zmniejszone.pkl")
         self.x10 = torch.zeros(1, 1)
         self.e10_filt = 0.0
         
         # --- Wczytywanie MSO 1 ---
         self.model1 = GreyBoxSystem(num_states=5, num_inputs=7)
-        self.model1.load_state_dict(torch.load('szara_skrzynka_mso1_wagi.pth'))
+        self.model1.load_state_dict(torch.load('source\\1\\szara_skrzynka_mso1_wagi.pth'))
         self.model1.eval()
-        self.scaler_u1 = joblib.load('scaler_u_mso1.pkl')
-        self.scaler_y1 = joblib.load('scaler_y_mso1.pkl')
+        self.scaler_u1 = joblib.load('source\\1\\scaler_u_mso1.pkl')
+        self.scaler_y1 = joblib.load('source\\1\\scaler_y_mso1.pkl')
         self.x1 = torch.zeros(1, 5) # Ten model ma aż 4 stany początkowe!
         self.e1_filt = 0.0
         
@@ -106,7 +106,7 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             y0_hat_norm, self.x0 = self.model0.step(u0_norm, self.x0)
             y0_hat = self.scaler_y0.inverse_transform(y0_hat_norm.numpy())
             e0 = abs(sample[self.y0_cols].values[0][0] - y0_hat[0][0])
-            self.e0_filt = 0.041 * e0 + 0.959 * self.e0_filt # Filtr wygładzający skoki     # bylo 0.003
+            self.e0_filt = 0.001 * e0 + 0.999 * self.e0_filt # Filtr wygładzający skoki     # bylo 0.003
             
             # --- Przetwarzanie próbki przez MSO 10 ---
             u10_raw = sample[self.u10_cols].values
@@ -114,7 +114,7 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             y10_hat_norm, self.x10 = self.model10.step(u10_norm, self.x10)
             y10_hat = self.scaler_y10.inverse_transform(y10_hat_norm.numpy())
             e10 = abs(sample[self.y10_cols].values[0][0] - y10_hat[0][0])
-            self.e10_filt = 0.041 * e10 + 0.959 * self.e10_filt                             # bylo 0.005
+            self.e10_filt = 0.001 * e10 + 0.999 * self.e10_filt                             # bylo 0.005
             
             # --- Przetwarzanie próbki przez MSO 1 ---
             u1_raw = sample[self.u1_cols].values
@@ -122,7 +122,7 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             y1_hat_norm, self.x1 = self.model1.step(u1_norm, self.x1)
             y1_hat = self.scaler_y1.inverse_transform(y1_hat_norm.numpy())
             e1 = abs(sample[self.y1_cols].values[0][0] - y1_hat[0][0])
-            self.e1_filt = 0.010 * e1 + 0.990 * self.e1_filt                                    # bylo 0.01
+            self.e1_filt = 0.001 * e1 + 0.999 * self.e1_filt                                    # bylo 0.01
 
         # ====================================================================
         # LOGIKA DETEKCJI I IZOLACJI W OPARCIU O FSM

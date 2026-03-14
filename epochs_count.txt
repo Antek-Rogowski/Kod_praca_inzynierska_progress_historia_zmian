@@ -522,3 +522,341 @@ Trening zakończony. Załadowano najlepsze wagi ze stratą MSE: 0.005201
 
 MSO 1 (3-stanowe) gotowe i zapisane!
 
+
+MSO 10 2 stany
+Rozpoczynam trening (Maksymalnie 2000 epok, Cierpliwość: 80)...
+Epoka 10/2000 | Strata MSE: 0.014585
+Epoka 20/2000 | Strata MSE: 0.012139
+Epoka 30/2000 | Strata MSE: 0.012165
+Epoka 40/2000 | Strata MSE: 0.013446
+Epoka 50/2000 | Strata MSE: 0.012744
+Epoka 60/2000 | Strata MSE: 0.010525
+Epoka 70/2000 | Strata MSE: 0.011299
+Epoka 80/2000 | Strata MSE: 0.010812
+Epoka 90/2000 | Strata MSE: 0.011049
+Epoka 100/2000 | Strata MSE: 0.010095
+Epoka 110/2000 | Strata MSE: 0.010395
+Epoka 120/2000 | Strata MSE: 0.010960
+Epoka 130/2000 | Strata MSE: 0.009533
+Epoka 140/2000 | Strata MSE: 0.009987
+Epoka 150/2000 | Strata MSE: 0.009815
+Epoka 160/2000 | Strata MSE: 0.009608
+Epoka 170/2000 | Strata MSE: 0.009876
+Epoka 180/2000 | Strata MSE: 0.009402
+Epoka 190/2000 | Strata MSE: 0.009896
+Epoka 200/2000 | Strata MSE: 0.009337
+Epoka 210/2000 | Strata MSE: 0.010029
+Epoka 220/2000 | Strata MSE: 0.009532
+Epoka 230/2000 | Strata MSE: 0.009344
+Epoka 240/2000 | Strata MSE: 0.009453
+Epoka 250/2000 | Strata MSE: 0.008979
+Epoka 260/2000 | Strata MSE: 0.009113
+Epoka 270/2000 | Strata MSE: 0.009109
+Epoka 280/2000 | Strata MSE: 0.009120
+Epoka 290/2000 | Strata MSE: 0.009310
+Epoka 300/2000 | Strata MSE: 0.009158
+Epoka 310/2000 | Strata MSE: 0.009100
+Epoka 320/2000 | Strata MSE: 0.008937
+Epoka 330/2000 | Strata MSE: 0.008968
+Epoka 340/2000 | Strata MSE: 0.008833
+Epoka 350/2000 | Strata MSE: 0.008812
+Epoka 360/2000 | Strata MSE: 0.008934
+Epoka 370/2000 | Strata MSE: 0.008655
+Epoka 380/2000 | Strata MSE: 0.009228
+Epoka 390/2000 | Strata MSE: 0.008819
+Epoka 400/2000 | Strata MSE: 0.008608
+Epoka 410/2000 | Strata MSE: 0.008709
+Epoka 420/2000 | Strata MSE: 0.008672
+Epoka 430/2000 | Strata MSE: 0.008769
+Epoka 440/2000 | Strata MSE: 0.008634
+Epoka 450/2000 | Strata MSE: 0.008848
+Epoka 460/2000 | Strata MSE: 0.008558
+Epoka 470/2000 | Strata MSE: 0.008555
+Epoka 480/2000 | Strata MSE: 0.008842
+Epoka 490/2000 | Strata MSE: 0.008688
+Epoka 500/2000 | Strata MSE: 0.008544
+Epoka 510/2000 | Strata MSE: 0.008556
+Epoka 520/2000 | Strata MSE: 0.008485
+Epoka 530/2000 | Strata MSE: 0.008696
+Epoka 540/2000 | Strata MSE: 0.008467
+Epoka 550/2000 | Strata MSE: 0.008496
+Epoka 560/2000 | Strata MSE: 0.008527
+Epoka 570/2000 | Strata MSE: 0.008454
+Epoka 580/2000 | Strata MSE: 0.008496
+Epoka 590/2000 | Strata MSE: 0.008428
+Epoka 600/2000 | Strata MSE: 0.008434
+Epoka 610/2000 | Strata MSE: 0.008624
+Epoka 620/2000 | Strata MSE: 0.008504
+Epoka 630/2000 | Strata MSE: 0.008414
+Epoka 640/2000 | Strata MSE: 0.008415
+Epoka 650/2000 | Strata MSE: 0.008466
+Epoka 660/2000 | Strata MSE: 0.008381
+Epoka 670/2000 | Strata MSE: 0.008477
+Epoka 680/2000 | Strata MSE: 0.008383
+Epoka 690/2000 | Strata MSE: 0.008360
+Epoka 700/2000 | Strata MSE: 0.008392
+Epoka 710/2000 | Strata MSE: 0.008424
+Epoka 720/2000 | Strata MSE: 0.008328
+Epoka 730/2000 | Strata MSE: 0.008341
+Epoka 740/2000 | Strata MSE: 0.008429
+Epoka 750/2000 | Strata MSE: 0.008334
+Epoka 760/2000 | Strata MSE: 0.008345
+Epoka 770/2000 | Strata MSE: 0.008385
+Epoka 780/2000 | Strata MSE: 0.008326
+Epoka 790/2000 | Strata MSE: 0.008343
+Epoka 800/2000 | Strata MSE: 0.008349
+Epoka 810/2000 | Strata MSE: 0.008345
+Epoka 820/2000 | Strata MSE: 0.008339
+Epoka 830/2000 | Strata MSE: 0.008311
+Epoka 840/2000 | Strata MSE: 0.008331
+Epoka 850/2000 | Strata MSE: 0.008377
+Epoka 860/2000 | Strata MSE: 0.008291
+Epoka 870/2000 | Strata MSE: 0.008283
+Epoka 880/2000 | Strata MSE: 0.008301
+Epoka 890/2000 | Strata MSE: 0.008388
+Epoka 900/2000 | Strata MSE: 0.008335
+Epoka 910/2000 | Strata MSE: 0.008251
+Epoka 920/2000 | Strata MSE: 0.008380
+Epoka 930/2000 | Strata MSE: 0.008288
+Epoka 940/2000 | Strata MSE: 0.008272
+Epoka 950/2000 | Strata MSE: 0.008325
+Epoka 960/2000 | Strata MSE: 0.008259
+Epoka 970/2000 | Strata MSE: 0.008321
+Epoka 980/2000 | Strata MSE: 0.008260
+Epoka 990/2000 | Strata MSE: 0.008289
+Epoka 1000/2000 | Strata MSE: 0.008240
+Epoka 1010/2000 | Strata MSE: 0.008308
+Epoka 1020/2000 | Strata MSE: 0.008265
+Epoka 1030/2000 | Strata MSE: 0.008318
+Epoka 1040/2000 | Strata MSE: 0.008312
+Epoka 1050/2000 | Strata MSE: 0.008309
+
+[!] EARLY STOPPING: Przerwano trening w epoce 1056!
+Brak poprawy o minimum 1e-06 od 80 epok.
+Trening zakończony. Załadowano najlepsze wagi ze stratą MSE: 0.008231
+
+Komórka MSO 10 gotowa!
+
+
+
+MSO 10 ntake_manifold_pressure output:
+Rozpoczynam trening (Maksymalnie 2000 epok, Cierpliwość: 80)...
+Epoka 10/2000 | Strata MSE: 0.036021
+Epoka 20/2000 | Strata MSE: 0.030482
+Epoka 30/2000 | Strata MSE: 0.028688
+Epoka 40/2000 | Strata MSE: 0.028087
+Epoka 50/2000 | Strata MSE: 0.027124
+Epoka 60/2000 | Strata MSE: 0.027279
+Epoka 70/2000 | Strata MSE: 0.026666
+Epoka 80/2000 | Strata MSE: 0.026277
+Epoka 90/2000 | Strata MSE: 0.025619
+Epoka 100/2000 | Strata MSE: 0.025112
+Epoka 110/2000 | Strata MSE: 0.025354
+Epoka 120/2000 | Strata MSE: 0.024904
+Epoka 130/2000 | Strata MSE: 0.024758
+Epoka 140/2000 | Strata MSE: 0.024935
+Epoka 150/2000 | Strata MSE: 0.024535
+Epoka 160/2000 | Strata MSE: 0.024542
+Epoka 170/2000 | Strata MSE: 0.025586
+Epoka 180/2000 | Strata MSE: 0.024887
+Epoka 190/2000 | Strata MSE: 0.024353
+Epoka 200/2000 | Strata MSE: 0.024066
+Epoka 210/2000 | Strata MSE: 0.023887
+Epoka 220/2000 | Strata MSE: 0.023249
+Epoka 230/2000 | Strata MSE: 0.023077
+Epoka 240/2000 | Strata MSE: 0.024235
+Epoka 250/2000 | Strata MSE: 0.022883
+Epoka 260/2000 | Strata MSE: 0.022865
+Epoka 270/2000 | Strata MSE: 0.023097
+Epoka 280/2000 | Strata MSE: 0.022851
+Epoka 290/2000 | Strata MSE: 0.022657
+Epoka 300/2000 | Strata MSE: 0.022596
+Epoka 310/2000 | Strata MSE: 0.022980
+Epoka 320/2000 | Strata MSE: 0.022544
+Epoka 330/2000 | Strata MSE: 0.022486
+Epoka 340/2000 | Strata MSE: 0.022224
+Epoka 350/2000 | Strata MSE: 0.022327
+Epoka 360/2000 | Strata MSE: 0.022509
+Epoka 370/2000 | Strata MSE: 0.022403
+Epoka 380/2000 | Strata MSE: 0.022263
+Epoka 390/2000 | Strata MSE: 0.021976
+Epoka 400/2000 | Strata MSE: 0.021880
+Epoka 410/2000 | Strata MSE: 0.021967
+Epoka 420/2000 | Strata MSE: 0.021737
+Epoka 430/2000 | Strata MSE: 0.021916
+Epoka 440/2000 | Strata MSE: 0.021828
+Epoka 450/2000 | Strata MSE: 0.021809
+Epoka 460/2000 | Strata MSE: 0.021842
+Epoka 470/2000 | Strata MSE: 0.021824
+Epoka 480/2000 | Strata MSE: 0.021834
+Epoka 490/2000 | Strata MSE: 0.021712
+Epoka 500/2000 | Strata MSE: 0.021810
+Epoka 510/2000 | Strata MSE: 0.021700
+Epoka 520/2000 | Strata MSE: 0.021705
+Epoka 530/2000 | Strata MSE: 0.021779
+Epoka 540/2000 | Strata MSE: 0.021634
+Epoka 550/2000 | Strata MSE: 0.021443
+Epoka 560/2000 | Strata MSE: 0.021649
+Epoka 570/2000 | Strata MSE: 0.021645
+Epoka 580/2000 | Strata MSE: 0.021527
+Epoka 590/2000 | Strata MSE: 0.021436
+Epoka 600/2000 | Strata MSE: 0.021601
+Epoka 610/2000 | Strata MSE: 0.021469
+Epoka 620/2000 | Strata MSE: 0.021599
+Epoka 630/2000 | Strata MSE: 0.021432
+Epoka 640/2000 | Strata MSE: 0.021602
+Epoka 650/2000 | Strata MSE: 0.021354
+Epoka 660/2000 | Strata MSE: 0.021397
+Epoka 670/2000 | Strata MSE: 0.021230
+Epoka 680/2000 | Strata MSE: 0.021211
+Epoka 690/2000 | Strata MSE: 0.021199
+Epoka 700/2000 | Strata MSE: 0.021241
+Epoka 710/2000 | Strata MSE: 0.021235
+Epoka 720/2000 | Strata MSE: 0.021232
+Epoka 730/2000 | Strata MSE: 0.021254
+Epoka 740/2000 | Strata MSE: 0.021171
+Epoka 750/2000 | Strata MSE: 0.021286
+Epoka 760/2000 | Strata MSE: 0.021203
+Epoka 770/2000 | Strata MSE: 0.021335
+Epoka 780/2000 | Strata MSE: 0.021113
+Epoka 790/2000 | Strata MSE: 0.021108
+Epoka 800/2000 | Strata MSE: 0.021117
+Epoka 810/2000 | Strata MSE: 0.021144
+Epoka 820/2000 | Strata MSE: 0.021270
+Epoka 830/2000 | Strata MSE: 0.021147
+Epoka 840/2000 | Strata MSE: 0.021119
+Epoka 850/2000 | Strata MSE: 0.021132
+Epoka 860/2000 | Strata MSE: 0.021136
+Epoka 870/2000 | Strata MSE: 0.021210
+Epoka 880/2000 | Strata MSE: 0.021129
+Epoka 890/2000 | Strata MSE: 0.020938
+Epoka 900/2000 | Strata MSE: 0.021393
+Epoka 910/2000 | Strata MSE: 0.021070
+Epoka 920/2000 | Strata MSE: 0.021066
+Epoka 930/2000 | Strata MSE: 0.021085
+Epoka 940/2000 | Strata MSE: 0.021066
+Epoka 950/2000 | Strata MSE: 0.021089
+Epoka 960/2000 | Strata MSE: 0.021217
+Epoka 970/2000 | Strata MSE: 0.021100
+Epoka 980/2000 | Strata MSE: 0.021036
+Epoka 990/2000 | Strata MSE: 0.021085
+Epoka 1000/2000 | Strata MSE: 0.020951
+
+[!] EARLY STOPPING: Przerwano trening w epoce 1001!
+Brak poprawy o minimum 1e-06 od 80 epok.
+Trening zakończony. Załadowano najlepsze wagi ze stratą MSE: 0.020930
+
+Komórka MSO 10 gotowa!
+
+
+MSO 10_inny output + inj fuel
+
+Rozpoczynam trening (Maksymalnie 2000 epok, Cierpliwość: 80)...
+Epoka 10/2000 | Strata MSE: 0.021579
+Epoka 20/2000 | Strata MSE: 0.019759
+Epoka 30/2000 | Strata MSE: 0.017940
+Epoka 40/2000 | Strata MSE: 0.017826
+Epoka 50/2000 | Strata MSE: 0.016817
+Epoka 60/2000 | Strata MSE: 0.016733
+Epoka 70/2000 | Strata MSE: 0.015965
+Epoka 80/2000 | Strata MSE: 0.015944
+Epoka 90/2000 | Strata MSE: 0.016025
+Epoka 100/2000 | Strata MSE: 0.016015
+Epoka 110/2000 | Strata MSE: 0.015008
+Epoka 120/2000 | Strata MSE: 0.014769
+Epoka 130/2000 | Strata MSE: 0.014510
+Epoka 140/2000 | Strata MSE: 0.014308
+Epoka 150/2000 | Strata MSE: 0.014467
+Epoka 160/2000 | Strata MSE: 0.014272
+Epoka 170/2000 | Strata MSE: 0.014464
+Epoka 180/2000 | Strata MSE: 0.013927
+Epoka 190/2000 | Strata MSE: 0.013900
+Epoka 200/2000 | Strata MSE: 0.013811
+Epoka 210/2000 | Strata MSE: 0.014872
+Epoka 220/2000 | Strata MSE: 0.013831
+Epoka 230/2000 | Strata MSE: 0.013557
+Epoka 240/2000 | Strata MSE: 0.013816
+Epoka 250/2000 | Strata MSE: 0.013456
+Epoka 260/2000 | Strata MSE: 0.013498
+Epoka 270/2000 | Strata MSE: 0.013416
+Epoka 280/2000 | Strata MSE: 0.013611
+Epoka 290/2000 | Strata MSE: 0.013659
+Epoka 300/2000 | Strata MSE: 0.013278
+Epoka 310/2000 | Strata MSE: 0.013126
+Epoka 320/2000 | Strata MSE: 0.013430
+Epoka 330/2000 | Strata MSE: 0.013076
+Epoka 340/2000 | Strata MSE: 0.013096
+Epoka 350/2000 | Strata MSE: 0.013172
+Epoka 360/2000 | Strata MSE: 0.012956
+Epoka 370/2000 | Strata MSE: 0.013105
+Epoka 380/2000 | Strata MSE: 0.013097
+Epoka 390/2000 | Strata MSE: 0.013032
+Epoka 400/2000 | Strata MSE: 0.012853
+Epoka 410/2000 | Strata MSE: 0.012961
+Epoka 420/2000 | Strata MSE: 0.012863
+Epoka 430/2000 | Strata MSE: 0.012883
+Epoka 440/2000 | Strata MSE: 0.012870
+Epoka 450/2000 | Strata MSE: 0.012847
+Epoka 460/2000 | Strata MSE: 0.012747
+Epoka 470/2000 | Strata MSE: 0.012882
+Epoka 480/2000 | Strata MSE: 0.012882
+Epoka 490/2000 | Strata MSE: 0.012892
+Epoka 500/2000 | Strata MSE: 0.012850
+Epoka 510/2000 | Strata MSE: 0.012857
+Epoka 520/2000 | Strata MSE: 0.012618
+Epoka 530/2000 | Strata MSE: 0.012917
+Epoka 540/2000 | Strata MSE: 0.012736
+Epoka 550/2000 | Strata MSE: 0.012650
+Epoka 560/2000 | Strata MSE: 0.012662
+Epoka 570/2000 | Strata MSE: 0.012647
+Epoka 580/2000 | Strata MSE: 0.012495
+Epoka 590/2000 | Strata MSE: 0.012631
+Epoka 600/2000 | Strata MSE: 0.012712
+Epoka 610/2000 | Strata MSE: 0.012556
+Epoka 620/2000 | Strata MSE: 0.012576
+Epoka 630/2000 | Strata MSE: 0.012515
+Epoka 640/2000 | Strata MSE: 0.012527
+Epoka 650/2000 | Strata MSE: 0.012487
+Epoka 660/2000 | Strata MSE: 0.012521
+Epoka 670/2000 | Strata MSE: 0.012744
+Epoka 680/2000 | Strata MSE: 0.012475
+Epoka 690/2000 | Strata MSE: 0.012413
+Epoka 700/2000 | Strata MSE: 0.012538
+Epoka 710/2000 | Strata MSE: 0.012502
+Epoka 720/2000 | Strata MSE: 0.012402
+Epoka 730/2000 | Strata MSE: 0.012490
+Epoka 740/2000 | Strata MSE: 0.012419
+Epoka 750/2000 | Strata MSE: 0.012472
+Epoka 760/2000 | Strata MSE: 0.012655
+Epoka 770/2000 | Strata MSE: 0.012454
+Epoka 780/2000 | Strata MSE: 0.012428
+Epoka 790/2000 | Strata MSE: 0.012351
+Epoka 800/2000 | Strata MSE: 0.012519
+Epoka 810/2000 | Strata MSE: 0.012510
+Epoka 820/2000 | Strata MSE: 0.012494
+Epoka 830/2000 | Strata MSE: 0.012610
+Epoka 840/2000 | Strata MSE: 0.012413
+Epoka 850/2000 | Strata MSE: 0.012413
+Epoka 860/2000 | Strata MSE: 0.012419
+Epoka 870/2000 | Strata MSE: 0.012408
+Epoka 880/2000 | Strata MSE: 0.012430
+Epoka 890/2000 | Strata MSE: 0.012419
+Epoka 900/2000 | Strata MSE: 0.012449
+Epoka 910/2000 | Strata MSE: 0.012387
+Epoka 920/2000 | Strata MSE: 0.012370
+Epoka 930/2000 | Strata MSE: 0.012378
+Epoka 940/2000 | Strata MSE: 0.012370
+Epoka 950/2000 | Strata MSE: 0.012364
+Epoka 960/2000 | Strata MSE: 0.012369
+Epoka 970/2000 | Strata MSE: 0.012388
+Epoka 980/2000 | Strata MSE: 0.012399
+
+[!] EARLY STOPPING: Przerwano trening w epoce 985!
+Brak poprawy o minimum 1e-06 od 80 epok.
+Trening zakończony. Załadowano najlepsze wagi ze stratą MSE: 0.012270
+
+Komórka MSO 10 gotowa!
+
+
+
+MSO 10 musi być zmienione
