@@ -58,10 +58,10 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
 
         self.ywaf_cols = ['injected_fuel_mass']
 
-        self.th0 = 2783.3   # Próg dla MSO 0
-        self.th1 = 1713.18  # Próg dla MSO 1 
-        self.th10 = 0.00001  # Próg dla MSO 10
-        self.thwaf = 0.001
+        self.th0 = 4018.4          #2783.3 sigma + 1std
+        self.th1 = 1713.18  # 1713.18 sigma + 1std
+        self.th10 = 0.000089  # 0.00001 sigma + 1std
+        self.thwaf = 0.00005      #0.001 sigma + 1std
 
     def Initialize(self):
         print("Inicjalizacja Grey-Box AI. Wczytywanie 3 modeli i 6 skalerów...")

@@ -1,0 +1,7 @@
+wszystkich próbek;36023;;;za³o¿enia
+fa³szywych alarmów;0;;;poprawna izolacja gdy dana izolacja max wartoœæ ze wszystkich
+detekcja b³edu;31816;;;b³¹d od 120 s
+poprawna izolacja;31816;;;
+;;;;
+skutecznoœæ detekcji;88,32%;;;
+skutecznoœæ izolacji;100%;;;
