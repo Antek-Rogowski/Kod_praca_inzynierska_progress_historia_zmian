@@ -56,17 +56,12 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         self.u1_cols = ['ambient_pressure', 'ambient_temperature', 'intercooler_temperature', 'throttle_position', 'engine_speed', 'injected_fuel_mass', 'wastegate_position']
         self.y1_cols = ['intake_manifold_pressure']
 
-        self.uwaf_cols = ['injected_fuel_mass', 'throttle_position', 'intercooler_temperature', 'intake_manifold_pressure']
-        self.ywaf_cols = ['air_mass_flow']
+        self.ywaf_cols = ['injected_fuel_mass']
 
-        # ====================================================================
-        # PROGI ALARMOWE (DO DOSTROJENIA!)
-        # Wpisz tu wartości nieco wyższe niż średnie błędy (MAE) z Twoich testów
-        # ====================================================================
-        self.th0 = 2783.3   # Próg dla MSO 0 (np. 6000 Pa)
-        self.th1 = 1713.18  # Próg dla MSO 1 (był głośniejszy, więc wyższy próg)
-        self.th10 = 0.00010  # Próg dla MSO 10
-        self.thwaf = 3000.0
+        self.th0 = 2783.3   # Próg dla MSO 0
+        self.th1 = 1713.18  # Próg dla MSO 1 
+        self.th10 = 0.00001  # Próg dla MSO 10
+        self.thwaf = 0.001
 
     def Initialize(self):
         print("Inicjalizacja Grey-Box AI. Wczytywanie 3 modeli i 6 skalerów...")
@@ -99,11 +94,11 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         self.e1_filt = 0.0
 
         # --- Wczytywanie MSO waf ---
-        self.modelwaf = GreyBoxSystem(num_states=1, num_inputs=4)
-        self.modelwaf.load_state_dict(torch.load(r"C:\Users\anton\OneDrive\Desktop\Diagnosis_System\source\WAF\szara_skrzynka_waf.pth"))
+        self.modelwaf = GreyBoxSystem(num_states=1, num_inputs=3)
+        self.modelwaf.load_state_dict(torch.load("source\\waf_article\\szara_skrzynka_waf_wagi.pth"))
         self.modelwaf.eval()
-        self.scaler_uwaf = joblib.load('source\\WAF\\scaler_u_waf.pkl')
-        self.scaler_ywaf = joblib.load('source\\WAF\\scaler_y_waf.pkl')
+        self.scaler_uwaf = joblib.load('source\\waf_article\\scaler_u_waf.pkl')
+        self.scaler_ywaf = joblib.load('source\\waf_article\\scaler_y_waf.pkl')
         self.xwaf = torch.zeros(1, 1) 
         self.ewaf_filt = 0.0
         
@@ -148,11 +143,28 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             self.e1_filt = 0.001 * e1 + 0.999 * self.e1_filt                                    # bylo 0.01
 
             # --- Przetwarzanie próbki przez MSO WAF ---
-            uwaf_raw = sample[self.uwaf_cols].values
+# --- Przetwarzanie próbki przez MSO WAF (HYBRYDA Z ARTYKUŁU) ---
+            engine_speed = sample['engine_speed'].values[0]
+            air_mass_flow = sample['air_mass_flow'].values[0]
+            throttle_pos = sample['throttle_position'].values[0]
+            
+            # Obliczanie cech "w locie" z ułamka sekundy
+            epsilon = 1e-6
+            waf_x1 = np.log(engine_speed + epsilon) * air_mass_flow
+            waf_x2 = air_mass_flow
+            waf_x3 = np.log(throttle_pos + epsilon)
+            
+            # Pakowanie w tablicę 2D pod skaler
+            uwaf_raw = np.array([[waf_x1, waf_x2, waf_x3]])
             uwaf_norm = torch.tensor(self.scaler_uwaf.transform(uwaf_raw), dtype=torch.float32)
+            
+            # Krok symulacji i odwracanie skali
             ywaf_hat_norm, self.xwaf = self.modelwaf.step(uwaf_norm, self.xwaf)
             ywaf_hat = self.scaler_ywaf.inverse_transform(ywaf_hat_norm.numpy())
-            ewaf = abs(sample[self.ywaf_cols].values[0][0] - ywaf_hat[0][0])
+            
+            # Obliczanie błędu predykcji paliwa
+            y_true_waf = sample[self.ywaf_cols].values[0][0]
+            ewaf = abs(y_true_waf - ywaf_hat[0][0])
             self.ewaf_filt = 0.001 * ewaf + 0.999 * self.ewaf_filt  
 
         # ====================================================================
@@ -178,7 +190,7 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             expected_fpic = np.array([1, 1, 0, 0]) # Uszkodzony czujnik IC
             expected_fpim = np.array([1, 1, 1, 0]) # Uszkodzony czujnik kolektora
             expected_fwaf = np.array([0, 0, 0, 1]) # Uszkodzony przepływomierz
-            expected_fiml = np.array([1, 0, 1, 0]) # Dziura/wyciek
+            expected_fiml = np.array([1, 0, 1, 1]) # Dziura/wyciek
             
             signatures = np.array([expected_fpic, expected_fpim, expected_fwaf, expected_fiml])
             
