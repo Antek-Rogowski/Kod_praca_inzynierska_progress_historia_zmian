@@ -58,10 +58,10 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
 
         self.ywaf_cols = ['injected_fuel_mass']
 
-        self.th0 = 4018.4          #2783.3 sigma + 1std
-        self.th1 = 1713.18  # 1713.18 sigma + 1std
-        self.th10 = 0.000089  # 0.00001 sigma + 1std
-        self.thwaf = 0.00005      #0.001 sigma + 1std
+        self.th0 = 3110.59         
+        self.th1 = 2922.5 
+        self.th10 = 0.000045 
+        self.thwaf = 0.00007      
 
     def Initialize(self):
         print("Inicjalizacja Grey-Box AI. Wczytywanie 3 modeli i 6 skalerów...")
@@ -143,7 +143,7 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             self.e1_filt = 0.001 * e1 + 0.999 * self.e1_filt                                    # bylo 0.01
 
             # --- Przetwarzanie próbki przez MSO WAF ---
-# --- Przetwarzanie próbki przez MSO WAF (HYBRYDA Z ARTYKUŁU) ---
+            # --- Przetwarzanie próbki przez MSO WAF (HYBRYDA Z ARTYKUŁU) ---
             engine_speed = sample['engine_speed'].values[0]
             air_mass_flow = sample['air_mass_flow'].values[0]
             throttle_pos = sample['throttle_position'].values[0]
