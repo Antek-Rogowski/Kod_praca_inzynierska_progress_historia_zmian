@@ -38,15 +38,12 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
     def __init__(self):
         super().__init__()
         
-        # Definicje kolumn dla MSO 0
         self.u0_cols = ['Intercooler_pressure', 'intercooler_temperature', 'throttle_position', 'engine_speed']
         self.y0_cols = ['intake_manifold_pressure']
         
-        # Definicje kolumn dla MSO 10
         self.u10_cols = ['delta_pressure', 'air_mass_flow', 'throttle_position']
         self.y10_cols = ['injected_fuel_mass']
         
-        # Definicje kolumn dla MSO 1
         self.u1_cols = ['ambient_pressure', 'ambient_temperature', 'intercooler_temperature', 'throttle_position', 'engine_speed', 'injected_fuel_mass', 'wastegate_position']
         self.y1_cols = ['intake_manifold_pressure']
 
