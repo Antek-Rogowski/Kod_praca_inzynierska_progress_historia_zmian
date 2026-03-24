@@ -4,7 +4,7 @@ import torch
 import glob
 import os
 # Zakładam, że masz już zainicjalizowany obiekt swojego systemu z załadowanymi wagami
-from DiagnosisSystemClass import ExampleDiagnosisSystem 
+from FirstDiagnosisSystemClass import ExampleDiagnosisSystem 
 
 def optimize_thresholds():
     DATA_DIR = r"C:\Users\anton\OneDrive\Desktop\data"
