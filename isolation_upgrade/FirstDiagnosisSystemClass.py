@@ -145,6 +145,9 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         # --- DIAGNOSTYKA I IZOLACJA ---
         
         # 1. Zwykłe progi (twarde 0 lub 1)
+        # --- DIAGNOSTYKA I IZOLACJA ---
+        
+        # 1. Zwykłe progi (twarde 0 lub 1)
         b0 = 1 if self.e0_filt > self.th0 else 0
         b10 = 1 if self.e10_filt > self.th10 else 0
         b1 = 1 if self.e1_filt > self.th1 else 0
@@ -168,15 +171,18 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
                 make_versor(np.array([1, 0, 1, 1], dtype=float)),  # fiml
             ])
             
-            # 2. Zwykły iloczyn skalarny z cosinusem
+            # 2. Zwykły iloczyn skalarny z cosinusem (Nienaruszona logika!)
             scores = np.dot(signatures, observed_versor)
-            
-            # 3. Rozdzielenie prawdopodobieństw PROPORCJONALNIE (bez twardej jedynki)
             total_score = np.sum(scores)
             
             if total_score > 0:
                 isolation[0, :4] = scores / total_score
             else:
                 isolation[0, 4] = 1.0
+                
+            # 3. ETAP POST-PROCESSINGU (Zwycięzca bierze wszystko)
+            max_idx = np.argmax(isolation[0])  # Znajduje indeks z największym ułamkiem
+            isolation = np.zeros((1, 5))       # Zeruje cały wektor
+            isolation[0, max_idx] = 1.0        # Wstawia twardą jedynkę na miejscu zwycięzcy
                 
         return detection, isolation
