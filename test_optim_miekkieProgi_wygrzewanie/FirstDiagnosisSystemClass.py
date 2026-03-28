@@ -111,9 +111,13 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         self.ywaf_s = scaler_ywaf.scale_[0]
         self.ywaf_m = scaler_ywaf.min_[0]
         
+        self.step_counter = 0  # <--- DODANO: Licznik do okresu wygrzewania
+        
         print("Models loaded. Ready to use.")
 
     def Input(self, sample):
+        self.step_counter += 1  # <--- DODANO: Zwiększanie licznika
+        
         # --- ETAP 1: PRE-PROCESSING I CACHE (Wykonywany tylko raz lub błyskawicznie) ---
         if not hasattr(self, '_cols_mapped'):
             cols = sample.columns.tolist()
@@ -131,7 +135,7 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             self._idx_y1 = cols.index(self.y1_cols[0])
             self._idx_ywaf = cols.index(self.ywaf_cols[0])
             
-            # Cache dla wektorów sygnatur diagnozy (Nie ma sensu liczyć tego co próbkę!)
+            # Cache dla wektorów sygnatur diagnozy
             def make_versor(vec):
                 norm = np.linalg.norm(vec)
                 return vec / norm if norm > 0 else vec
@@ -144,7 +148,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             ])
             self._cols_mapped = True
 
-        # Zamiast dziesiątek odwołań sample['kolumna'], wyciągamy raz wszystko do surowej tablicy Numpy (Potężne przyspieszenie!)
         arr = sample.values[0]
 
         with torch.no_grad():
@@ -158,7 +161,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             
             y0_true = arr[self._idx_y0]
             e0 = abs(y0_true - y0_hat)
-            self.e0_filt = 0.001 * e0 + 0.999 * self.e0_filt 
             
             # --- MSO_10 ---
             pim = arr[self._idx_pim]
@@ -166,7 +168,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             amf = arr[self._idx_amf]
             thr = arr[self._idx_thr]
             
-            # math jest o wiele szybsze dla pojedynczych skalarów niż numpy!
             delta_p = math.sqrt(abs(pim - pic))
             
             u10_raw = torch.tensor([[delta_p, amf, thr]], dtype=torch.float32)
@@ -177,7 +178,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             
             y10_true = arr[self._idx_y10]
             e10 = abs(y10_true - y10_hat)
-            self.e10_filt = 0.001 * e10 + 0.999 * self.e10_filt                  
             
             # --- MSO_1 ---
             u1_raw = torch.from_numpy(arr[self._idx_u1].astype(np.float32)).unsqueeze(0)
@@ -188,7 +188,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             
             y1_true = arr[self._idx_y1]
             e1 = abs(y1_true - y1_hat)
-            self.e1_filt = 0.001 * e1 + 0.999 * self.e1_filt                                   
 
             # --- MSO_WAF ---
             eng_speed = arr[self._idx_eng]
@@ -205,9 +204,21 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             
             ywaf_true = arr[self._idx_ywaf]
             ewaf = abs(ywaf_true - ywaf_hat)
-            self.ewaf_filt = 0.001 * ewaf + 0.999 * self.ewaf_filt  
+            
+            # --- DODANO: Wyłączenie filtracji przez pierwsze 50 próbek ---
+            if self.step_counter <= 100:
+                self.e0_filt = e0
+                self.e10_filt = e10
+                self.e1_filt = e1
+                self.ewaf_filt = ewaf
+                return [0], np.zeros((1, 5))
+            else:
+                self.e0_filt = 0.001 * e0 + 0.999 * self.e0_filt 
+                self.e10_filt = 0.001 * e10 + 0.999 * self.e10_filt                  
+                self.e1_filt = 0.001 * e1 + 0.999 * self.e1_filt                                   
+                self.ewaf_filt = 0.001 * ewaf + 0.999 * self.ewaf_filt  
 
-        # --- DIAGNOSTYKA I IZOLACJA (Logika nieruszona, wyłącznie zoptymalizowana na szybkość) ---
+        # --- DIAGNOSTYKA I IZOLACJA (Logika nieruszona) ---
         
         b0 = 1 if self.e0_filt > self.th0 else 0
         b10 = 1 if self.e10_filt > self.th10 else 0

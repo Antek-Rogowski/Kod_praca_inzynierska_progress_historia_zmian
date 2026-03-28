@@ -3,7 +3,7 @@ import pandas as pd
 import torch
 import glob
 import os
-# Zakładam, że masz już zainicjalizowany obiekt swojego systemu z załadowanymi wagami
+
 from FirstDiagnosisSystemClass import ExampleDiagnosisSystem 
 
 def optimize_thresholds():

@@ -1,0 +1,223 @@
+import math
+import numpy as np
+import pandas as pd
+import joblib
+import torch
+import torch.nn as nn
+from DiagnosisSystemClass import DiagnosisSystemClass
+
+class SubNetwork(nn.Module):
+    def __init__(self, input_dim, output_dim=1):
+        super(SubNetwork, self).__init__()
+        self.net = nn.Sequential(
+            nn.Linear(input_dim, 256), nn.ReLU(),
+            nn.Linear(256, 256), nn.ReLU(),
+            nn.Linear(256, output_dim)
+        )
+    def forward(self, x): return self.net(x)
+
+class GreyBoxSystem(nn.Module):
+    def __init__(self, num_states, num_inputs, T_sample=0.05):
+        super(GreyBoxSystem, self).__init__()
+        self.T = T_sample
+        self.num_states = num_states
+        total_features = num_states + num_inputs
+        
+        self.g_func = SubNetwork(total_features, num_states)
+        self.h_func = SubNetwork(total_features, 1)
+
+    def step(self, u_t, x_t):
+        inputs = torch.cat((x_t, u_t), dim=1)
+        y_hat_t = self.h_func(inputs)
+        x_next = x_t + self.T * self.g_func(inputs)
+        return y_hat_t, x_next
+
+
+class ExampleDiagnosisSystem(DiagnosisSystemClass):
+    def __init__(self):
+        super().__init__()
+        
+        self.u0_cols = ['Intercooler_pressure', 'intercooler_temperature', 'throttle_position', 'engine_speed']
+        self.y0_cols = ['intake_manifold_pressure']
+        
+        self.u10_cols = ['delta_pressure', 'air_mass_flow', 'throttle_position']
+        self.y10_cols = ['injected_fuel_mass']
+        
+        self.u1_cols = ['ambient_pressure', 'ambient_temperature', 'intercooler_temperature', 'throttle_position', 'engine_speed', 'injected_fuel_mass', 'wastegate_position']
+        self.y1_cols = ['intake_manifold_pressure']
+
+        self.ywaf_cols = ['injected_fuel_mass']
+
+        # Zoptymalizowane progi
+        self.th0 = 2801.1176         
+        self.th1 = 1523.1193 
+        self.th10 = 0.0002 
+        self.thwaf = 0.0001      
+
+    def Initialize(self):
+        print("Grey-Box init. Wczytywanie wag i parametrów skalujących...")
+        
+        # --- MSO_0 ---
+        self.model0 = GreyBoxSystem(num_states=1, num_inputs=4) 
+        self.model0.load_state_dict(torch.load(r'params\weights_mso0.pth'))
+        self.model0.eval()
+        
+        scaler_u0 = joblib.load(r'params\scaler_u_mso0.pkl')
+        self.u0_s = torch.tensor(scaler_u0.scale_, dtype=torch.float32)
+        self.u0_m = torch.tensor(scaler_u0.min_, dtype=torch.float32)
+        scaler_y0 = joblib.load(r'params\scaler_y_mso0.pkl')
+        self.y0_s = scaler_y0.scale_[0]
+        self.y0_m = scaler_y0.min_[0]
+        
+        self.x0 = torch.zeros(1, 1)
+        self.e0_filt = 0.0
+        
+        # --- MSO_10 ---
+        self.model10 = GreyBoxSystem(num_states=1, num_inputs=3)
+        self.model10.load_state_dict(torch.load(r'params\weights_mso10.pth'))
+        self.model10.eval()
+        
+        scaler_u10 = joblib.load(r'params\scaler_u_mso10.pkl')
+        self.u10_s = torch.tensor(scaler_u10.scale_, dtype=torch.float32)
+        self.u10_m = torch.tensor(scaler_u10.min_, dtype=torch.float32)
+        scaler_y10 = joblib.load(r'params\scaler_y_mso10.pkl')
+        self.y10_s = scaler_y10.scale_[0]
+        self.y10_m = scaler_y10.min_[0]
+        
+        self.x10 = torch.zeros(1, 1)
+        self.e10_filt = 0.0
+        
+        # --- MSO_1 ---
+        self.model1 = GreyBoxSystem(num_states=5, num_inputs=7)
+        self.model1.load_state_dict(torch.load(r'params\weights_mso1.pth'))
+        self.model1.eval()
+        
+        scaler_u1 = joblib.load(r'params\scaler_u_mso1.pkl')
+        self.u1_s = torch.tensor(scaler_u1.scale_, dtype=torch.float32)
+        self.u1_m = torch.tensor(scaler_u1.min_, dtype=torch.float32)
+        scaler_y1 = joblib.load(r'params\scaler_y_mso1.pkl')
+        self.y1_s = scaler_y1.scale_[0]
+        self.y1_m = scaler_y1.min_[0]
+        
+        self.x1 = torch.zeros(1, 5) 
+        self.e1_filt = 0.0
+
+        # --- MSO_WAF ---
+        self.modelwaf = GreyBoxSystem(num_states=1, num_inputs=3)
+        self.modelwaf.load_state_dict(torch.load(r'params\weights_waf.pth'))
+        self.modelwaf.eval()
+        
+        scaler_uwaf = joblib.load(r'params\scaler_u_waf.pkl')
+        self.uwaf_s = torch.tensor(scaler_uwaf.scale_, dtype=torch.float32)
+        self.uwaf_m = torch.tensor(scaler_uwaf.min_, dtype=torch.float32)
+        scaler_ywaf = joblib.load(r'params\scaler_y_waf.pkl')
+        self.ywaf_s = scaler_ywaf.scale_[0]
+        self.ywaf_m = scaler_ywaf.min_[0]
+        
+        self.xwaf = torch.zeros(1, 1) 
+        self.ewaf_filt = 0.0
+        
+        print("Modele gotowe.")
+
+    def Input(self, sample):
+        # sample to 1-wierszowy Pandas DataFrame
+        with torch.no_grad():
+            
+            # --- MSO_0 ---
+            u0_raw = torch.tensor(sample[self.u0_cols].values, dtype=torch.float32)
+            u0_norm = u0_raw * self.u0_s + self.u0_m
+            
+            y0_hat_norm, self.x0 = self.model0.step(u0_norm, self.x0)
+            y0_hat = (y0_hat_norm.item() - self.y0_m) / self.y0_s
+            
+            y0_true = sample[self.y0_cols].values[0, 0]
+            e0 = abs(y0_true - y0_hat)
+            self.e0_filt = 0.001 * e0 + 0.999 * self.e0_filt 
+            
+            # --- MSO_10 ---
+            pim = sample['intake_manifold_pressure'].values[0]
+            pic = sample['Intercooler_pressure'].values[0]
+            amf = sample['air_mass_flow'].values[0]
+            thr = sample['throttle_position'].values[0]
+            
+            delta_p = math.sqrt(abs(pim - pic))
+            
+            u10_raw = torch.tensor([[delta_p, amf, thr]], dtype=torch.float32)
+            u10_norm = u10_raw * self.u10_s + self.u10_m
+            
+            y10_hat_norm, self.x10 = self.model10.step(u10_norm, self.x10)
+            y10_hat = (y10_hat_norm.item() - self.y10_m) / self.y10_s
+            
+            y10_true = sample[self.y10_cols].values[0, 0]
+            e10 = abs(y10_true - y10_hat)
+            self.e10_filt = 0.001 * e10 + 0.999 * self.e10_filt                  
+            
+            # --- MSO_1 ---
+            u1_raw = torch.tensor(sample[self.u1_cols].values, dtype=torch.float32)
+            u1_norm = u1_raw * self.u1_s + self.u1_m
+            
+            y1_hat_norm, self.x1 = self.model1.step(u1_norm, self.x1)
+            y1_hat = (y1_hat_norm.item() - self.y1_m) / self.y1_s
+            
+            y1_true = sample[self.y1_cols].values[0, 0]
+            e1 = abs(y1_true - y1_hat)
+            self.e1_filt = 0.001 * e1 + 0.999 * self.e1_filt                                   
+
+            # --- MSO_WAF ---
+            eng_speed = sample['engine_speed'].values[0]
+            waf_x1 = math.log(eng_speed + 1e-6) * amf
+            waf_x2 = amf
+            waf_x3 = math.log(thr + 1e-6)
+            
+            uwaf_raw = torch.tensor([[waf_x1, waf_x2, waf_x3]], dtype=torch.float32)
+            uwaf_norm = uwaf_raw * self.uwaf_s + self.uwaf_m
+            
+            ywaf_hat_norm, self.xwaf = self.modelwaf.step(uwaf_norm, self.xwaf)
+            ywaf_hat = (ywaf_hat_norm.item() - self.ywaf_m) / self.ywaf_s
+            
+            ywaf_true = sample[self.ywaf_cols].values[0, 0]
+            ewaf = abs(ywaf_true - ywaf_hat)
+            self.ewaf_filt = 0.001 * ewaf + 0.999 * self.ewaf_filt  
+
+        # --- DIAGNOSTYKA I IZOLACJA ---
+        b0 = (self.e0_filt / self.th0) if self.e0_filt > self.th0 else 0.0
+        b10 = (self.e10_filt / self.th10) if self.e10_filt > self.th10 else 0.0
+        b1 = (self.e1_filt / self.th1) if self.e1_filt > self.th1 else 0.0
+        bwaf = (self.ewaf_filt / self.thwaf) if self.ewaf_filt > self.thwaf else 0.0
+
+        detection = [1] if (b0 > 0 or b10 > 0 or b1 > 0 or bwaf > 0) else [0]
+        isolation = np.zeros((1, 5)) 
+        
+        if detection[0] == 1: 
+            observed_signature = np.array([b0, b10, b1, bwaf], dtype=float)
+            
+            def make_versor(vec):
+                norm = np.linalg.norm(vec)
+                return vec / norm if norm > 0 else vec
+
+            observed_versor = make_versor(observed_signature)
+            
+            expected_fpic = make_versor(np.array([1.0, 1.0, 0.0, 0.0], dtype=float))
+            expected_fpim = make_versor(np.array([1.0, 1.0, 1.0, 0.0], dtype=float))
+            expected_fwaf = make_versor(np.array([0.0, 0.0, 0.0, 1.0], dtype=float))
+            expected_fiml = make_versor(np.array([1.0, 0.0, 1.0, 1.0], dtype=float))
+            
+            score_fpic = np.dot(observed_versor, expected_fpic)
+            score_fpim = np.dot(observed_versor, expected_fpim)
+            score_fwaf = np.dot(observed_versor, expected_fwaf)
+            score_fiml = np.dot(observed_versor, expected_fiml)
+            
+            scores = np.array([score_fpic, score_fpim, score_fwaf, score_fiml])
+            scores[scores < 0.05] = 0.0
+            
+            total_score = np.sum(scores)
+            
+            if total_score > 0:
+                isolation[0, 0] = scores[0] / total_score
+                isolation[0, 1] = scores[1] / total_score
+                isolation[0, 2] = scores[2] / total_score
+                isolation[0, 3] = scores[3] / total_score
+            else:
+                isolation[0, 4] = 1.0
+                
+        return detection, isolation
