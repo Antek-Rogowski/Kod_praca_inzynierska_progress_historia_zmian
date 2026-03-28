@@ -53,7 +53,7 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         self.th0 = 2801.1176         
         self.th1 = 1523.1193 
         self.th10 = 0.0002 
-        self.thwaf = 0.00006      
+        self.thwaf = 0.00004      
 
     def Initialize(self):
         print("Grey-Box init. Reading weights and scalers (Fast Mode)...")
@@ -114,11 +114,9 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         print("Models loaded. Ready to use.")
 
     def Input(self, sample):
-        # --- ETAP 1: PRE-PROCESSING I CACHE (Wykonywany tylko raz lub błyskawicznie) ---
         if not hasattr(self, '_cols_mapped'):
             cols = sample.columns.tolist()
             
-            # Mapowanie indeksów numerycznych dla ekstremalnie szybkiego wyciągania danych
             self._idx_u0 = [cols.index(c) for c in self.u0_cols]
             self._idx_y0 = cols.index(self.y0_cols[0])
             self._idx_pim = cols.index('intake_manifold_pressure')
@@ -131,7 +129,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             self._idx_y1 = cols.index(self.y1_cols[0])
             self._idx_ywaf = cols.index(self.ywaf_cols[0])
             
-            # Cache dla wektorów sygnatur diagnozy (Nie ma sensu liczyć tego co próbkę!)
             def make_versor(vec):
                 norm = np.linalg.norm(vec)
                 return vec / norm if norm > 0 else vec
@@ -144,12 +141,10 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             ])
             self._cols_mapped = True
 
-        # Zamiast dziesiątek odwołań sample['kolumna'], wyciągamy raz wszystko do surowej tablicy Numpy (Potężne przyspieszenie!)
         arr = sample.values[0]
 
         with torch.no_grad():
             
-            # --- MSO_0 ---
             u0_raw = torch.from_numpy(arr[self._idx_u0].astype(np.float32)).unsqueeze(0)
             u0_norm = u0_raw * self.u0_s + self.u0_m
             
@@ -160,13 +155,11 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             e0 = abs(y0_true - y0_hat)
             self.e0_filt = 0.001 * e0 + 0.999 * self.e0_filt 
             
-            # --- MSO_10 ---
             pim = arr[self._idx_pim]
             pic = arr[self._idx_pic]
             amf = arr[self._idx_amf]
             thr = arr[self._idx_thr]
             
-            # math jest o wiele szybsze dla pojedynczych skalarów niż numpy!
             delta_p = math.sqrt(abs(pim - pic))
             
             u10_raw = torch.tensor([[delta_p, amf, thr]], dtype=torch.float32)
@@ -190,7 +183,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             e1 = abs(y1_true - y1_hat)
             self.e1_filt = 0.001 * e1 + 0.999 * self.e1_filt                                   
 
-            # --- MSO_WAF ---
             eng_speed = arr[self._idx_eng]
             epsilon = 1e-6
             waf_x1 = math.log(eng_speed + epsilon) * amf
@@ -206,8 +198,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             ywaf_true = arr[self._idx_ywaf]
             ewaf = abs(ywaf_true - ywaf_hat)
             self.ewaf_filt = 0.001 * ewaf + 0.999 * self.ewaf_filt  
-
-        # --- DIAGNOSTYKA I IZOLACJA (Logika nieruszona, wyłącznie zoptymalizowana na szybkość) ---
         
         b0 = 1 if self.e0_filt > self.th0 else 0
         b10 = 1 if self.e10_filt > self.th10 else 0
@@ -218,14 +208,12 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
         isolation = np.zeros((1, 5)) 
 
         if detection[0] == 1: 
-            # Manualne wyliczenie normy bez zapytań do obcych bibliotek
             obs_norm = math.sqrt(b0*b0 + b10*b10 + b1*b1 + bwaf*bwaf)
             if obs_norm > 0:
                 observed_versor = np.array([b0/obs_norm, b10/obs_norm, b1/obs_norm, bwaf/obs_norm], dtype=float)
             else:
                 observed_versor = np.array([0.0, 0.0, 0.0, 0.0], dtype=float)
             
-            # Błyskawiczny iloczyn skalarny ze scacheowaną macierzą wzorców
             scores = np.dot(self._signatures, observed_versor)
             total_score = np.sum(scores)
             
@@ -234,7 +222,6 @@ class ExampleDiagnosisSystem(DiagnosisSystemClass):
             else:
                 isolation[0, 4] = 1.0
                 
-            # 3. ETAP POST-PROCESSINGU (Zwycięzca bierze wszystko)
             max_idx = np.argmax(isolation[0])  
             isolation = np.zeros((1, 5))       
             isolation[0, max_idx] = 1.0        
